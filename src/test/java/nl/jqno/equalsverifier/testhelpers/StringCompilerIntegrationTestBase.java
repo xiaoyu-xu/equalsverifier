@@ -9,7 +9,7 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.io.IOException;
 
-public class Java8IntegrationTestBase extends IntegrationTestBase {
+public class StringCompilerIntegrationTestBase extends IntegrationTestBase {
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder();
 
@@ -30,11 +30,12 @@ public class Java8IntegrationTestBase extends IntegrationTestBase {
         return compiler.compile(className, code);
     }
 
+    @Deprecated
     public boolean isJava8Available() {
         return isTypeAvailable("java.util.Optional");
     }
 
-    private boolean isTypeAvailable(String fullyQualifiedTypeName) {
+    public boolean isTypeAvailable(String fullyQualifiedTypeName) {
         return new ConditionalInstantiator(fullyQualifiedTypeName).resolve() != null;
     }
 }
