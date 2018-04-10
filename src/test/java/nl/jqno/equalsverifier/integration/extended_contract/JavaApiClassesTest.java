@@ -1,7 +1,6 @@
 package nl.jqno.equalsverifier.integration.extended_contract;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
 import nl.jqno.equalsverifier.testhelpers.IntegrationTestBase;
 import nl.jqno.equalsverifier.testhelpers.types.TypeHelper;
 import org.junit.Test;
@@ -282,11 +281,11 @@ public class JavaApiClassesTest extends IntegrationTestBase {
         private final ZonedDateTime zonedDateTime;
         private final ZoneId zoneId;
         private final DateTimeFormatter dateTimeFormatter;
-        private final CompletableFuture completableFuture;
+        private final CompletableFuture<?> completableFuture;
         private final StampedLock stampedLock;
 
         public Java8ApiClassesContainer(Optional<?> optional, ZonedDateTime zonedDateTime, ZoneId zoneId,
-                DateTimeFormatter dateTimeFormatter, CompletableFuture completableFuture, StampedLock stampedLock) {
+                DateTimeFormatter dateTimeFormatter, CompletableFuture<?> completableFuture, StampedLock stampedLock) {
             this.optional = optional; this.zonedDateTime = zonedDateTime; this.zoneId = zoneId;
             this.dateTimeFormatter = dateTimeFormatter; this.completableFuture = completableFuture;
             this.stampedLock = stampedLock;
