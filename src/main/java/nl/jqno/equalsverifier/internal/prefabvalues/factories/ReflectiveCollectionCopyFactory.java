@@ -14,7 +14,7 @@ import static nl.jqno.equalsverifier.internal.reflection.Util.objects;
  * Implementation of {@link PrefabValueFactory} that reflectively instantiates
  * collections by copying them from a collection that was already instantiated.
  */
-public final class ReflectiveCollectionCopyFactory<T> extends AbstractReflectiveGenericFactory<T> {
+public final class ReflectiveCollectionCopyFactory<T> implements AbstractReflectiveGenericFactory<T> {
     private final String typeName;
     private final Class<?> declaredParameterRawType;
     private final Class<?> actualParameterRawType;

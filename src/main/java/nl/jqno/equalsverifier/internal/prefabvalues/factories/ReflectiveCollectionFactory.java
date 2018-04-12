@@ -13,7 +13,7 @@ import static nl.jqno.equalsverifier.internal.reflection.Util.*;
  * Implementation of {@link PrefabValueFactory} that instantiates collections
  * using reflection, while taking generics into account.
  */
-public abstract class ReflectiveCollectionFactory<T> extends AbstractReflectiveGenericFactory<T> {
+public abstract class ReflectiveCollectionFactory<T> implements AbstractReflectiveGenericFactory<T> {
     private final String typeName;
 
     /* default */ ReflectiveCollectionFactory(String typeName) {

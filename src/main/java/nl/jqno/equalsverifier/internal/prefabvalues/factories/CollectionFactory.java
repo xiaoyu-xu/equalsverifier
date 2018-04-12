@@ -12,11 +12,12 @@ import java.util.LinkedHashSet;
  * implementations of {@link Collection}, taking generics into account.
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public abstract class CollectionFactory<T extends Collection> extends AbstractReflectiveGenericFactory<T> {
-    public abstract T createEmpty();
+@FunctionalInterface
+public interface CollectionFactory<T extends Collection> extends AbstractReflectiveGenericFactory<T> {
+    public T createEmpty();
 
     @Override
-    public Tuple<T> createValues(TypeTag tag, PrefabValues prefabValues, LinkedHashSet<TypeTag> typeStack) {
+    public default Tuple<T> createValues(TypeTag tag, PrefabValues prefabValues, LinkedHashSet<TypeTag> typeStack) {
         LinkedHashSet<TypeTag> clone = cloneWith(typeStack, tag);
         TypeTag entryTag = determineAndCacheActualTypeTag(0, tag, prefabValues, clone);
 

@@ -14,7 +14,7 @@ import static nl.jqno.equalsverifier.internal.reflection.Util.objects;
  * Implementation of {@link PrefabValueFactory} that specializes in JavaFX
  * property classes, taking generics into account.
  */
-public final class ReflectiveJavaFxPropertyFactory<T> extends AbstractReflectiveGenericFactory<T> {
+public final class ReflectiveJavaFxPropertyFactory<T> implements AbstractReflectiveGenericFactory<T> {
     private final String typeName;
     private final Class<?> parameterRawType;
 

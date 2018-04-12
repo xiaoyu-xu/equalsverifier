@@ -17,7 +17,7 @@ import static nl.jqno.equalsverifier.internal.reflection.Util.objects;
  * using reflection, while taking generics into account.
  */
 @SuppressWarnings("rawtypes")
-public class ReflectiveEnumMapFactory extends AbstractReflectiveGenericFactory<EnumMap> {
+public class ReflectiveEnumMapFactory implements AbstractReflectiveGenericFactory<EnumMap> {
     @Override
     public Tuple<EnumMap> createValues(TypeTag tag, PrefabValues prefabValues, LinkedHashSet<TypeTag> typeStack) {
         LinkedHashSet<TypeTag> clone = cloneWith(typeStack, tag);

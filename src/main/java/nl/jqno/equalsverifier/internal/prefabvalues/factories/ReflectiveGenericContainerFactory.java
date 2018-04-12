@@ -14,7 +14,7 @@ import static nl.jqno.equalsverifier.internal.reflection.Util.objects;
  * Implementation of {@link PrefabValueFactory} that instantiates objects using
  * reflection, while taking generics into account.
  */
-public class ReflectiveGenericContainerFactory<T> extends AbstractReflectiveGenericFactory<T> {
+public class ReflectiveGenericContainerFactory<T> implements AbstractReflectiveGenericFactory<T> {
     private final String typeName;
     private final String factoryMethod;
     private final Class<?> parameterType;

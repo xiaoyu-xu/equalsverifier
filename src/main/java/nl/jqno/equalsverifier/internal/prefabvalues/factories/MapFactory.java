@@ -12,11 +12,12 @@ import java.util.Map;
  * implementations of {@link Map}, taking generics into account.
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public abstract class MapFactory<T extends Map> extends AbstractReflectiveGenericFactory<T> {
-    public abstract T createEmpty();
+@FunctionalInterface
+public interface MapFactory<T extends Map> extends AbstractReflectiveGenericFactory<T> {
+    public T createEmpty();
 
     @Override
-    public Tuple<T> createValues(TypeTag tag, PrefabValues prefabValues, LinkedHashSet<TypeTag> typeStack) {
+    public default Tuple<T> createValues(TypeTag tag, PrefabValues prefabValues, LinkedHashSet<TypeTag> typeStack) {
         LinkedHashSet<TypeTag> clone = cloneWith(typeStack, tag);
         TypeTag keyTag = determineAndCacheActualTypeTag(0, tag, prefabValues, clone);
         TypeTag valueTag = determineAndCacheActualTypeTag(1, tag, prefabValues, clone);

@@ -137,95 +137,44 @@ public final class JavaApiPrefabValues {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void addCollection() {
-        addFactory(Iterable.class, new CollectionFactory() {
-            @Override public Collection createEmpty() { return new ArrayList<>(); }
-        });
-        addFactory(Collection.class, new CollectionFactory<Collection>() {
-            @Override public Collection createEmpty() { return new ArrayList<>(); }
-        });
+        addFactory(Iterable.class, (CollectionFactory)ArrayList::new);
+        addCollectionFactory(Collection.class, ArrayList::new);
     }
 
     @SuppressWarnings("rawtypes")
     private void addLists() {
-        addFactory(List.class, new CollectionFactory<List>() {
-            @Override public List createEmpty() { return new ArrayList<>(); }
-        });
-        addFactory(CopyOnWriteArrayList.class, new CollectionFactory<CopyOnWriteArrayList>() {
-            @Override public CopyOnWriteArrayList createEmpty() { return new CopyOnWriteArrayList<>(); }
-        });
-        addFactory(LinkedList.class, new CollectionFactory<LinkedList>() {
-            @Override public LinkedList createEmpty() { return new LinkedList<>(); }
-        });
-        addFactory(ArrayList.class, new CollectionFactory<ArrayList>() {
-            @Override public ArrayList createEmpty() { return new ArrayList<>(); }
-        });
-        addFactory(Vector.class, new CollectionFactory<Vector>() {
-            @Override public Vector createEmpty() { return new Vector<>(); }
-        });
-        addFactory(Stack.class, new CollectionFactory<Stack>() {
-            @Override public Stack createEmpty() { return new Stack<>(); }
-        });
+        addCollectionFactory(List.class, ArrayList::new);
+        addCollectionFactory(CopyOnWriteArrayList.class, CopyOnWriteArrayList::new);
+        addCollectionFactory(LinkedList.class, LinkedList::new);
+        addCollectionFactory(ArrayList.class, ArrayList::new);
+        addCollectionFactory(Vector.class, Vector::new);
+        addCollectionFactory(Stack.class, Stack::new);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void addMaps() {
-        addFactory(Map.class, new MapFactory<Map>() {
-            @Override public Map createEmpty() { return new HashMap<>(); }
-        });
-        addFactory(SortedMap.class, new MapFactory<SortedMap>() {
-            @Override public SortedMap createEmpty() { return new TreeMap<>(OBJECT_COMPARATOR); }
-        });
-        addFactory(NavigableMap.class, new MapFactory<NavigableMap>() {
-            @Override public NavigableMap createEmpty() { return new TreeMap<>(OBJECT_COMPARATOR); }
-        });
-        addFactory(ConcurrentNavigableMap.class, new MapFactory<ConcurrentNavigableMap>() {
-            @Override public ConcurrentNavigableMap createEmpty() { return new ConcurrentSkipListMap<>(OBJECT_COMPARATOR); }
-        });
-        addFactory(ConcurrentHashMap.class, new MapFactory<ConcurrentHashMap>() {
-            @Override public ConcurrentHashMap createEmpty() { return new ConcurrentHashMap<>(); }
-        });
-        addFactory(HashMap.class, new MapFactory<HashMap>() {
-            @Override public HashMap createEmpty() { return new HashMap<>(); }
-        });
-        addFactory(Hashtable.class, new MapFactory<Hashtable>() {
-            @Override public Hashtable createEmpty() { return new Hashtable<>(); }
-        });
-        addFactory(LinkedHashMap.class, new MapFactory<LinkedHashMap>() {
-            @Override public LinkedHashMap createEmpty() { return new LinkedHashMap<>(); }
-        });
-        addFactory(Properties.class, new MapFactory<Properties>() {
-            @Override public Properties createEmpty() { return new Properties(); }
-        });
-        addFactory(TreeMap.class, new MapFactory<TreeMap>() {
-            @Override public TreeMap createEmpty() { return new TreeMap<>(OBJECT_COMPARATOR); }
-        });
-        addFactory(WeakHashMap.class, new MapFactory<WeakHashMap>() {
-            @Override public WeakHashMap createEmpty() { return new WeakHashMap<>(); }
-        });
+        addMapFactory(Map.class, HashMap::new);
+        addMapFactory(SortedMap.class, () -> new TreeMap<>(OBJECT_COMPARATOR));
+        addMapFactory(NavigableMap.class, () -> new TreeMap<>(OBJECT_COMPARATOR));
+        addMapFactory(ConcurrentNavigableMap.class, () -> new ConcurrentSkipListMap<>(OBJECT_COMPARATOR));
+        addMapFactory(ConcurrentHashMap.class, ConcurrentHashMap::new);
+        addMapFactory(HashMap.class, HashMap::new);
+        addMapFactory(Hashtable.class, Hashtable::new);
+        addMapFactory(LinkedHashMap.class, LinkedHashMap::new);
+        addMapFactory(Properties.class, Properties::new);
+        addMapFactory(TreeMap.class, () -> new TreeMap<>(OBJECT_COMPARATOR));
+        addMapFactory(WeakHashMap.class, WeakHashMap::new);
         addFactory(EnumMap.class, new ReflectiveEnumMapFactory());
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void addSets() {
-        addFactory(Set.class, new CollectionFactory<Set>() {
-            @Override public Set createEmpty() { return new HashSet(); }
-        });
-        addFactory(SortedSet.class, new CollectionFactory<SortedSet>() {
-            @Override public SortedSet createEmpty() { return new TreeSet<>(OBJECT_COMPARATOR); }
-        });
-        addFactory(NavigableSet.class, new CollectionFactory<NavigableSet>() {
-            @Override public NavigableSet createEmpty() { return new TreeSet<>(OBJECT_COMPARATOR); }
-        });
-        addFactory(CopyOnWriteArraySet.class, new CollectionFactory<CopyOnWriteArraySet>() {
-            @Override public CopyOnWriteArraySet createEmpty() { return new CopyOnWriteArraySet<>(); }
-        });
-        addFactory(HashSet.class, new CollectionFactory<HashSet>() {
-            @Override
-            public HashSet createEmpty() { return new HashSet<>(); }
-        });
-        addFactory(TreeSet.class, new CollectionFactory<TreeSet>() {
-            @Override public TreeSet createEmpty() { return new TreeSet<>(OBJECT_COMPARATOR); }
-        });
+        addCollectionFactory(Set.class, () -> new HashSet());
+        addCollectionFactory(SortedSet.class, () -> new TreeSet<>(OBJECT_COMPARATOR));
+        addCollectionFactory(NavigableSet.class, () -> new TreeSet<>(OBJECT_COMPARATOR));
+        addCollectionFactory(CopyOnWriteArraySet.class, CopyOnWriteArraySet::new);
+        addCollectionFactory(HashSet.class, HashSet::new);
+        addCollectionFactory(TreeSet.class, () -> new TreeSet<>(OBJECT_COMPARATOR));
         addFactory(EnumSet.class, new ReflectiveEnumSetFactory());
 
         BitSet redBitSet = new BitSet();
@@ -237,44 +186,24 @@ public final class JavaApiPrefabValues {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void addQueues() {
-        addFactory(Queue.class, new CollectionFactory<Queue>() {
-            @Override public Queue createEmpty() { return new ArrayBlockingQueue<>(1); }
+        addCollectionFactory(Queue.class, () -> new ArrayBlockingQueue<>(1));
+        addCollectionFactory(BlockingQueue.class, () -> new ArrayBlockingQueue<>(1));
+        addCollectionFactory(Deque.class, () -> new ArrayDeque<>(1));
+        addCollectionFactory(BlockingDeque.class, () -> new LinkedBlockingDeque<>(1));
+        addCollectionFactory(ArrayBlockingQueue.class, () -> new ArrayBlockingQueue<>(1));
+        addCollectionFactory(ConcurrentLinkedQueue.class, ConcurrentLinkedQueue::new);
+        addFactory(DelayQueue.class, (tag, pf, typeStack) -> {
+            TypeTag delayed = new TypeTag(Delayed.class);
+            DelayQueue red = new DelayQueue<>();
+            red.add(pf.giveRed(delayed));
+            DelayQueue black = new DelayQueue<>();
+            black.add(pf.giveBlack(delayed));
+            DelayQueue redCopy = new DelayQueue<>();
+            redCopy.add(pf.giveRed(delayed));
+            return new Tuple<>(red, black, redCopy);
         });
-        addFactory(BlockingQueue.class, new CollectionFactory<BlockingQueue>() {
-            @Override public BlockingQueue createEmpty() { return new ArrayBlockingQueue<>(1); }
-        });
-        addFactory(Deque.class, new CollectionFactory<Deque>() {
-            @Override public Deque createEmpty() { return new ArrayDeque<>(1); }
-        });
-        addFactory(BlockingDeque.class, new CollectionFactory<BlockingDeque>() {
-            @Override public BlockingDeque createEmpty() { return new LinkedBlockingDeque<>(1); }
-        });
-        addFactory(ArrayBlockingQueue.class, new CollectionFactory<ArrayBlockingQueue>() {
-            @Override public ArrayBlockingQueue createEmpty() { return new ArrayBlockingQueue<>(1); }
-        });
-        addFactory(ConcurrentLinkedQueue.class, new CollectionFactory<ConcurrentLinkedQueue>() {
-            @Override public ConcurrentLinkedQueue createEmpty() { return new ConcurrentLinkedQueue<>(); }
-        });
-        addFactory(DelayQueue.class, new PrefabValueFactory<DelayQueue>() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public Tuple<DelayQueue> createValues(TypeTag tag, PrefabValues pf, LinkedHashSet<TypeTag> typeStack) {
-                TypeTag delayed = new TypeTag(Delayed.class);
-                DelayQueue red = new DelayQueue<>();
-                red.add(pf.<Delayed>giveRed(delayed));
-                DelayQueue black = new DelayQueue<>();
-                black.add(pf.<Delayed>giveBlack(delayed));
-                DelayQueue redCopy = new DelayQueue<>();
-                redCopy.add(pf.<Delayed>giveRed(delayed));
-                return new Tuple<>(red, black, redCopy);
-            }
-        });
-        addFactory(LinkedBlockingQueue.class, new CollectionFactory<LinkedBlockingQueue>() {
-            @Override public LinkedBlockingQueue createEmpty() { return new LinkedBlockingQueue<>(1); }
-        });
-        addFactory(PriorityBlockingQueue.class, new CollectionFactory<PriorityBlockingQueue>() {
-            @Override public PriorityBlockingQueue createEmpty() { return new PriorityBlockingQueue<>(1, OBJECT_COMPARATOR); }
-        });
+        addCollectionFactory(LinkedBlockingQueue.class, () -> new LinkedBlockingQueue<>(1));
+        addCollectionFactory(PriorityBlockingQueue.class, () -> new PriorityBlockingQueue<>(1, OBJECT_COMPARATOR));
         addValues(SynchronousQueue.class, new SynchronousQueue<>(), new SynchronousQueue<>(), new SynchronousQueue<>());
     }
 
@@ -469,6 +398,14 @@ public final class JavaApiPrefabValues {
     @SuppressWarnings("unchecked")
     private <T> void addValues(Class<T> type, Object red, Object black, Object redCopy) {
         prefabValues.addFactory(type, (T)red, (T)black, (T)redCopy);
+    }
+
+    private <T extends Collection<?>> void addCollectionFactory(Class<T> type, CollectionFactory<T> factory) {
+        prefabValues.addFactory(type, factory);
+    }
+
+    private <T extends Map<?, ?>> void addMapFactory(Class<T> type, MapFactory<T> factory) {
+        prefabValues.addFactory(type, factory);
     }
 
     private <T> void addFactory(Class<T> type, PrefabValueFactory<T> factory) {

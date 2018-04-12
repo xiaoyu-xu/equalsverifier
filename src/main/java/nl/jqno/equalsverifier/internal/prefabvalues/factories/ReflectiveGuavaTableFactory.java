@@ -15,7 +15,7 @@ import static nl.jqno.equalsverifier.internal.reflection.Util.*;
  * Guava's Table using reflection (since Guava may not be on the classpath)
  * while taking generics into account.
  */
-public abstract class ReflectiveGuavaTableFactory<T> extends AbstractReflectiveGenericFactory<T> {
+public abstract class ReflectiveGuavaTableFactory<T> implements AbstractReflectiveGenericFactory<T> {
     private final String typeName;
 
     /* default */ ReflectiveGuavaTableFactory(String typeName) {

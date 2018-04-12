@@ -17,7 +17,7 @@ import static nl.jqno.equalsverifier.internal.reflection.Util.objects;
  * Guava's EnumBiMap using reflection (since Guava may not be on the classpath)
  * while taking generics into account.
  */
-public class ReflectiveGuavaEnumBiMapFactory<T> extends AbstractReflectiveGenericFactory<T> {
+public class ReflectiveGuavaEnumBiMapFactory<T> implements AbstractReflectiveGenericFactory<T> {
     private static final String TYPE_NAME = "com.google.common.collect.EnumBiMap";
 
     @Override

@@ -14,7 +14,7 @@ import static nl.jqno.equalsverifier.internal.reflection.Util.*;
  * Implementation of {@link PrefabValueFactory} that instantiates maps
  * using reflection, while taking generics into account.
  */
-public abstract class ReflectiveMapFactory<T> extends AbstractReflectiveGenericFactory<T> {
+public abstract class ReflectiveMapFactory<T> implements AbstractReflectiveGenericFactory<T> {
     private final String typeName;
 
     /* default */ ReflectiveMapFactory(String typeName) {

@@ -16,7 +16,7 @@ import static nl.jqno.equalsverifier.internal.reflection.Util.objects;
  * using reflection, while taking generics into account.
  */
 @SuppressWarnings("rawtypes")
-public class ReflectiveEnumSetFactory extends AbstractReflectiveGenericFactory<EnumSet> {
+public class ReflectiveEnumSetFactory implements AbstractReflectiveGenericFactory<EnumSet> {
     @Override
     public Tuple<EnumSet> createValues(TypeTag tag, PrefabValues prefabValues, LinkedHashSet<TypeTag> typeStack) {
         ConditionalInstantiator ci = new ConditionalInstantiator(EnumSet.class.getName());

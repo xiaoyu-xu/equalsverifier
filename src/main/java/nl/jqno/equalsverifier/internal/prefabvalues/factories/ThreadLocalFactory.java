@@ -7,7 +7,7 @@ import nl.jqno.equalsverifier.internal.prefabvalues.TypeTag;
 import java.util.LinkedHashSet;
 
 @SuppressWarnings("rawtypes")
-public class ThreadLocalFactory extends AbstractReflectiveGenericFactory<ThreadLocal> {
+public class ThreadLocalFactory implements AbstractReflectiveGenericFactory<ThreadLocal> {
     @Override
     public Tuple<ThreadLocal> createValues(TypeTag tag, PrefabValues prefabValues, LinkedHashSet<TypeTag> typeStack) {
         LinkedHashSet<TypeTag> clone = cloneWith(typeStack, tag);
@@ -22,11 +22,6 @@ public class ThreadLocalFactory extends AbstractReflectiveGenericFactory<ThreadL
     }
 
     private static ThreadLocal create(final Object value) {
-        return new ThreadLocal() {
-            @Override
-            protected Object initialValue() {
-                return value;
-            }
-        };
+        return ThreadLocal.withInitial(() -> value);
     }
 }
