@@ -23,8 +23,8 @@ public class CollectionFactoryTest {
     private static final TypeTag ONEELEMENTENUM_TYPETAG = new TypeTag(OneElementEnum.class);
     private static final TypeTag ONEELEMENTENUMSET_TYPETAG = new TypeTag(Set.class, ONEELEMENTENUM_TYPETAG);
 
-    private static final CollectionFactory<List> LIST_FACTORY = ArrayList::new;
-    private static final CollectionFactory<Set> SET_FACTORY = HashSet::new;
+    private static final CollectionFactory<List> LIST_FACTORY = new CollectionFactory<>(ArrayList::new);
+    private static final CollectionFactory<Set> SET_FACTORY = new CollectionFactory<>(HashSet::new);
 
     private final PrefabValues prefabValues = new PrefabValues();
     private final LinkedHashSet<TypeTag> typeStack = new LinkedHashSet<>();

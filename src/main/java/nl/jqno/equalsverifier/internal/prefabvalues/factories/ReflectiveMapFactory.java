@@ -7,6 +7,7 @@ import nl.jqno.equalsverifier.internal.reflection.ConditionalInstantiator;
 
 import java.util.Comparator;
 import java.util.LinkedHashSet;
+import java.util.function.Supplier;
 
 import static nl.jqno.equalsverifier.internal.reflection.Util.*;
 
@@ -14,39 +15,28 @@ import static nl.jqno.equalsverifier.internal.reflection.Util.*;
  * Implementation of {@link PrefabValueFactory} that instantiates maps
  * using reflection, while taking generics into account.
  */
-public abstract class ReflectiveMapFactory<T> implements AbstractReflectiveGenericFactory<T> {
+public class ReflectiveMapFactory<T> implements AbstractReflectiveGenericFactory<T> {
     private final String typeName;
+    private final Supplier<Object> createEmpty;
 
-    /* default */ ReflectiveMapFactory(String typeName) {
+    /* default */ ReflectiveMapFactory(String typeName, Supplier<Object> createEmpty) {
         this.typeName = typeName;
+        this.createEmpty = createEmpty;
     }
 
     public static <T> ReflectiveMapFactory<T> callFactoryMethod(final String typeName, final String methodName) {
-        return new ReflectiveMapFactory<T>(typeName) {
-            @Override
-            protected Object createEmpty() {
-                return new ConditionalInstantiator(typeName)
-                        .callFactory(methodName, classes(), objects());
-            }
-        };
+        return new ReflectiveMapFactory<>(
+            typeName,
+            () -> new ConditionalInstantiator(typeName).callFactory(methodName, classes(), objects()));
     }
 
     public static <T> ReflectiveMapFactory<T> callFactoryMethodWithComparator(
             final String typeName, final String methodName, final Object parameterValue) {
-        return new ReflectiveMapFactory<T>(typeName) {
-            @Override
-            protected Object createEmpty() {
-                return new ConditionalInstantiator(typeName)
-                        .callFactory(methodName, classes(Comparator.class, Comparator.class), objects(parameterValue, parameterValue));
-            }
-        };
+        return new ReflectiveMapFactory<>(
+            typeName,
+            () -> new ConditionalInstantiator(typeName)
+                .callFactory(methodName, classes(Comparator.class, Comparator.class), objects(parameterValue, parameterValue)));
     }
-
-    protected String getTypeName() {
-        return typeName;
-    }
-
-    protected abstract Object createEmpty();
 
     @Override
     public Tuple<T> createValues(TypeTag tag, PrefabValues prefabValues, LinkedHashSet<TypeTag> typeStack) {
@@ -63,7 +53,7 @@ public abstract class ReflectiveMapFactory<T> implements AbstractReflectiveGener
 
     private Object createWith(Object key, Object value) {
         Class<?> type = classForName(typeName);
-        Object result = createEmpty();
+        Object result = createEmpty.get();
         invoke(type, result, "put", classes(Object.class, Object.class), objects(key, value));
         return result;
     }

@@ -7,6 +7,7 @@ import nl.jqno.equalsverifier.internal.reflection.ConditionalInstantiator;
 
 import java.util.Comparator;
 import java.util.LinkedHashSet;
+import java.util.function.Supplier;
 
 import static nl.jqno.equalsverifier.internal.reflection.Util.*;
 
@@ -15,35 +16,28 @@ import static nl.jqno.equalsverifier.internal.reflection.Util.*;
  * Guava's Table using reflection (since Guava may not be on the classpath)
  * while taking generics into account.
  */
-public abstract class ReflectiveGuavaTableFactory<T> implements AbstractReflectiveGenericFactory<T> {
+public class ReflectiveGuavaTableFactory<T> implements AbstractReflectiveGenericFactory<T> {
     private final String typeName;
+    private final Supplier<Object> createEmpty;
 
-    /* default */ ReflectiveGuavaTableFactory(String typeName) {
+    /* default */ ReflectiveGuavaTableFactory(String typeName, Supplier<Object> createEmpty) {
         this.typeName = typeName;
+        this.createEmpty = createEmpty;
     }
 
     public static <T> ReflectiveGuavaTableFactory<T> callFactoryMethod(final String typeName, final String methodName) {
-        return new ReflectiveGuavaTableFactory<T>(typeName) {
-            @Override
-            protected Object createEmpty() {
-                return new ConditionalInstantiator(typeName)
-                        .callFactory(methodName, classes(), objects());
-            }
-        };
+        return new ReflectiveGuavaTableFactory<>(
+            typeName,
+            () -> new ConditionalInstantiator(typeName).callFactory(methodName, classes(), objects()));
     }
 
     public static <T> ReflectiveGuavaTableFactory<T> callFactoryMethodWithComparator(
             final String typeName, final String methodName, final Object parameterValue) {
-        return new ReflectiveGuavaTableFactory<T>(typeName) {
-            @Override
-            protected Object createEmpty() {
-                return new ConditionalInstantiator(typeName)
-                        .callFactory(methodName, classes(Comparator.class, Comparator.class), objects(parameterValue, parameterValue));
-            }
-        };
+        return new ReflectiveGuavaTableFactory<>(
+            typeName,
+            () -> new ConditionalInstantiator(typeName)
+                .callFactory(methodName, classes(Comparator.class, Comparator.class), objects(parameterValue, parameterValue)));
     }
-
-    protected abstract Object createEmpty();
 
     @Override
     public Tuple<T> createValues(TypeTag tag, PrefabValues prefabValues, LinkedHashSet<TypeTag> typeStack) {
@@ -61,7 +55,7 @@ public abstract class ReflectiveGuavaTableFactory<T> implements AbstractReflecti
 
     private Object createWith(Object column, Object row, Object value) {
         Class<?> type = classForName(typeName);
-        Object result = createEmpty();
+        Object result = createEmpty.get();
         invoke(type, result, "put", classes(Object.class, Object.class, Object.class), objects(column, row, value));
         return result;
     }

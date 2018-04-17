@@ -24,7 +24,7 @@ public class MapFactoryTest {
     private static final TypeTag ONEELEMENTENUM_TYPETAG = new TypeTag(OneElementEnum.class);
     private static final TypeTag ONEELEMENTENUMKEYMAP_TYPETAG = new TypeTag(Map.class, ONEELEMENTENUM_TYPETAG, OBJECT_TYPETAG);
 
-    private static final MapFactory<Map> MAP_FACTORY = HashMap::new;
+    private static final MapFactory<Map> MAP_FACTORY = new MapFactory<>(HashMap::new);
 
     private final PrefabValues prefabValues = new PrefabValues();
     private final LinkedHashSet<TypeTag> typeStack = new LinkedHashSet<>();

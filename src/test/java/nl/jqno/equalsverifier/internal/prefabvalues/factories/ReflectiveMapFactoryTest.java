@@ -24,7 +24,7 @@ public class ReflectiveMapFactoryTest {
     private static final TypeTag WILDCARDMAP_TYPETAG = new TypeTag(Map.class, OBJECT_TYPETAG, OBJECT_TYPETAG);
     private static final TypeTag RAWMAP_TYPETAG = new TypeTag(Map.class);
 
-    private static final ReflectiveMapFactory<Map> MAP_FACTORY = new StubMapPrefabValueFactory("java.util.HashMap");
+    private static final ReflectiveMapFactory<Map> MAP_FACTORY = stub("java.util.HashMap");
 
     private final PrefabValues prefabValues = new PrefabValues();
     private final LinkedHashSet<TypeTag> typeStack = new LinkedHashSet<>();
@@ -63,13 +63,10 @@ public class ReflectiveMapFactoryTest {
         assertEquals(mapOf(blackObject, blackObject), tuple.getBlack());
     }
 
-    private static class StubMapPrefabValueFactory extends ReflectiveMapFactory<Map> {
-        public StubMapPrefabValueFactory(String typeName) { super(typeName); }
-
-        @Override
-        public Object createEmpty() {
-            return new ConditionalInstantiator(getTypeName()).instantiate(classes(), objects());
-        }
+    private static <T> ReflectiveMapFactory<T> stub(String typeName) {
+        return new ReflectiveMapFactory<>(
+            typeName,
+            () -> new ConditionalInstantiator(typeName).instantiate(classes(), objects()));
     }
 
     private <K, V> Map<K, V> mapOf(K key, V value) {

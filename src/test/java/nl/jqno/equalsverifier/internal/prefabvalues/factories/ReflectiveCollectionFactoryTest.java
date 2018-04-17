@@ -23,8 +23,8 @@ public class ReflectiveCollectionFactoryTest {
     private static final TypeTag WILDCARDLIST_TYPETAG = new TypeTag(List.class, OBJECT_TYPETAG);
     private static final TypeTag RAWLIST_TYPETAG = new TypeTag(List.class);
 
-    private static final ReflectiveCollectionFactory<List> LIST_FACTORY = new StubReflectiveCollectionFactory<>("java.util.ArrayList");
-    private static final ReflectiveCollectionFactory<Set> SET_FACTORY = new StubReflectiveCollectionFactory<>("java.util.HashSet");
+    private static final ReflectiveCollectionFactory<List> LIST_FACTORY = stub("java.util.ArrayList");
+    private static final ReflectiveCollectionFactory<Set> SET_FACTORY = stub("java.util.HashSet");
 
     private final PrefabValues prefabValues = new PrefabValues();
     private final LinkedHashSet<TypeTag> typeStack = new LinkedHashSet<>();
@@ -70,13 +70,10 @@ public class ReflectiveCollectionFactoryTest {
         assertEquals(listOf(blackObject), tuple.getBlack());
     }
 
-    private static class StubReflectiveCollectionFactory<T> extends ReflectiveCollectionFactory<T> {
-        public StubReflectiveCollectionFactory(String typeName) { super(typeName); }
-
-        @Override
-        public Object createEmpty() {
-            return new ConditionalInstantiator(getTypeName()).instantiate(classes(), objects());
-        }
+    private static <T> ReflectiveCollectionFactory<T> stub(String typeName) {
+        return new ReflectiveCollectionFactory<>(
+            typeName,
+            () -> new ConditionalInstantiator(typeName).instantiate(classes(), objects()));
     }
 
     @SafeVarargs

@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.*;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import static nl.jqno.equalsverifier.internal.reflection.Util.*;
@@ -135,7 +136,7 @@ public final class JavaApiPrefabValues {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void addCollection() {
-        addFactory(Iterable.class, (CollectionFactory)ArrayList::new);
+        addFactory(Iterable.class, new CollectionFactory(ArrayList::new));
         addCollectionFactory(Collection.class, ArrayList::new);
     }
 
@@ -398,12 +399,12 @@ public final class JavaApiPrefabValues {
         prefabValues.addFactory(type, (T)red, (T)black, (T)redCopy);
     }
 
-    private <T extends Collection<?>> void addCollectionFactory(Class<T> type, CollectionFactory<T> factory) {
-        prefabValues.addFactory(type, factory);
+    private <T extends Collection<?>> void addCollectionFactory(Class<T> type, Supplier<T> createEmpty) {
+        prefabValues.addFactory(type, new CollectionFactory<>(createEmpty));
     }
 
-    private <T extends Map<?, ?>> void addMapFactory(Class<T> type, MapFactory<T> factory) {
-        prefabValues.addFactory(type, factory);
+    private <T extends Map<?, ?>> void addMapFactory(Class<T> type, Supplier<T> createEmpty) {
+        prefabValues.addFactory(type, new MapFactory<>(createEmpty));
     }
 
     private <T> void addFactory(Class<T> type, PrefabValueFactory<T> factory) {
