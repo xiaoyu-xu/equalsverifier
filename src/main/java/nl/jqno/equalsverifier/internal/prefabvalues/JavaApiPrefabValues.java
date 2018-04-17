@@ -31,9 +31,7 @@ public final class JavaApiPrefabValues {
     private static final String GUAVA_PACKAGE = "com.google.common.collect.";
     private static final String JODA_PACKAGE = "org.joda.time.";
 
-    private static final Comparator<Object> OBJECT_COMPARATOR = new Comparator<Object>() {
-        @Override public int compare(Object o1, Object o2) { return Integer.compare(o1.hashCode(), o2.hashCode()); }
-    };
+    private static final Comparator<Object> OBJECT_COMPARATOR = Comparator.comparingInt(Object::hashCode);
 
     private PrefabValues prefabValues;
 
@@ -169,7 +167,7 @@ public final class JavaApiPrefabValues {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void addSets() {
-        addCollectionFactory(Set.class, () -> new HashSet());
+        addCollectionFactory(Set.class, HashSet::new);
         addCollectionFactory(SortedSet.class, () -> new TreeSet<>(OBJECT_COMPARATOR));
         addCollectionFactory(NavigableSet.class, () -> new TreeSet<>(OBJECT_COMPARATOR));
         addCollectionFactory(CopyOnWriteArraySet.class, CopyOnWriteArraySet::new);
