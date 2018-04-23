@@ -4,24 +4,48 @@ import nl.jqno.equalsverifier.internal.prefabvalues.PrefabValues;
 import nl.jqno.equalsverifier.internal.prefabvalues.Tuple;
 import nl.jqno.equalsverifier.internal.prefabvalues.TypeTag;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class GenericContainerFactory<T> implements AbstractReflectiveGenericFactory<T> {
+public final class GenericContainerFactory<T> implements AbstractReflectiveGenericFactory<T> {
 
-    private final Function<?, T> factory;
+    private final Function<List<Object>, T> factory;
 
-    public GenericContainerFactory(Function<?, T> factory) {
+    private GenericContainerFactory(Function<List<Object>, T> factory) {
         this.factory = factory;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <A, T> GenericContainerFactory<T> one(Function<A, T> f) {
+        return new GenericContainerFactory<>(list -> f.apply((A)list.get(0)));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <A, B, T> GenericContainerFactory<T> two(BiFunction<A, B, T> f) {
+        return new GenericContainerFactory<>(list -> f.apply((A)list.get(0), (B)list.get(1)));
     }
 
     @Override
     public Tuple<T> createValues(TypeTag tag, PrefabValues prefabValues, LinkedHashSet<TypeTag> typeStack) {
-        TypeTag internalTag = determineActualTypeTagFor(0, tag);
+        LinkedHashSet<TypeTag> clone = cloneWith(typeStack, tag);
 
-        Object red = factory.apply(prefabValues.giveRed(internalTag));
-        Object black = factory.apply(prefabValues.giveBlack(internalTag));
-        Object redCopy = factory.apply(prefabValues.giveRed(internalTag));
+        List<Object> redValues = new ArrayList<>();
+        List<Object> blackValues = new ArrayList<>();
+
+        int n = tag.getType().getTypeParameters().length;
+        for (int i = 0; i < n; i++) {
+            TypeTag paramTag = determineAndCacheActualTypeTag(i, tag, prefabValues, clone);
+
+            redValues.add(prefabValues.giveRed(paramTag));
+            blackValues.add(prefabValues.giveBlack(paramTag));
+        }
+
+        Object red = factory.apply(redValues);
+        Object black = factory.apply(blackValues);
+        Object redCopy = factory.apply(redValues);
 
         return Tuple.of(red, black, redCopy);
     }
