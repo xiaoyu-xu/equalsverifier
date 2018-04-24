@@ -19,6 +19,7 @@ import java.util.concurrent.locks.StampedLock;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
+import static nl.jqno.equalsverifier.internal.prefabvalues.factories.GenericContainerFactory.collection;
 import static nl.jqno.equalsverifier.internal.reflection.Util.*;
 
 /**
@@ -139,18 +140,22 @@ public final class JavaApiPrefabValues {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void addCollection() {
-        addFactory(Iterable.class, new CollectionFactory(ArrayList::new));
-        addCollectionFactory(Collection.class, ArrayList::new);
+        addFactory(Iterable.class, GenericContainerFactory.one(a -> {
+            Collection coll = new ArrayList<>();
+            coll.add(a);
+            return coll;
+        }, ArrayList::new));
+        addFactory(Collection.class, collection(ArrayList::new));
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private void addLists() {
-        addCollectionFactory(List.class, ArrayList::new);
-        addCollectionFactory(CopyOnWriteArrayList.class, CopyOnWriteArrayList::new);
-        addCollectionFactory(LinkedList.class, LinkedList::new);
-        addCollectionFactory(ArrayList.class, ArrayList::new);
-        addCollectionFactory(Vector.class, Vector::new);
-        addCollectionFactory(Stack.class, Stack::new);
+        addFactory(List.class, collection(ArrayList::new));
+        addFactory(CopyOnWriteArrayList.class, collection(CopyOnWriteArrayList::new));
+        addFactory(LinkedList.class, collection(LinkedList::new));
+        addFactory(ArrayList.class, collection(ArrayList::new));
+        addFactory(Vector.class, collection(Vector::new));
+        addFactory(Stack.class, collection(Stack::new));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -171,12 +176,12 @@ public final class JavaApiPrefabValues {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void addSets() {
-        addCollectionFactory(Set.class, HashSet::new);
-        addCollectionFactory(SortedSet.class, () -> new TreeSet<>(OBJECT_COMPARATOR));
-        addCollectionFactory(NavigableSet.class, () -> new TreeSet<>(OBJECT_COMPARATOR));
-        addCollectionFactory(CopyOnWriteArraySet.class, CopyOnWriteArraySet::new);
-        addCollectionFactory(HashSet.class, HashSet::new);
-        addCollectionFactory(TreeSet.class, () -> new TreeSet<>(OBJECT_COMPARATOR));
+        addFactory(Set.class, collection(HashSet::new));
+        addFactory(SortedSet.class, collection(() -> new TreeSet<>(OBJECT_COMPARATOR)));
+        addFactory(NavigableSet.class, collection(() -> new TreeSet<>(OBJECT_COMPARATOR)));
+        addFactory(CopyOnWriteArraySet.class, collection(CopyOnWriteArraySet::new));
+        addFactory(HashSet.class, collection(HashSet::new));
+        addFactory(TreeSet.class, collection(() -> new TreeSet<>(OBJECT_COMPARATOR)));
         addFactory(EnumSet.class, new ReflectiveEnumSetFactory());
 
         BitSet redBitSet = new BitSet();
@@ -188,12 +193,12 @@ public final class JavaApiPrefabValues {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void addQueues() {
-        addCollectionFactory(Queue.class, () -> new ArrayBlockingQueue<>(1));
-        addCollectionFactory(BlockingQueue.class, () -> new ArrayBlockingQueue<>(1));
-        addCollectionFactory(Deque.class, () -> new ArrayDeque<>(1));
-        addCollectionFactory(BlockingDeque.class, () -> new LinkedBlockingDeque<>(1));
-        addCollectionFactory(ArrayBlockingQueue.class, () -> new ArrayBlockingQueue<>(1));
-        addCollectionFactory(ConcurrentLinkedQueue.class, ConcurrentLinkedQueue::new);
+        addFactory(Queue.class, collection(() -> new ArrayBlockingQueue<>(1)));
+        addFactory(BlockingQueue.class, collection(() -> new ArrayBlockingQueue<>(1)));
+        addFactory(Deque.class, collection(() -> new ArrayDeque<>(1)));
+        addFactory(BlockingDeque.class, collection(() -> new LinkedBlockingDeque<>(1)));
+        addFactory(ArrayBlockingQueue.class, collection(() -> new ArrayBlockingQueue<>(1)));
+        addFactory(ConcurrentLinkedQueue.class, collection(ConcurrentLinkedQueue::new));
         addFactory(DelayQueue.class, (tag, pf, typeStack) -> {
             TypeTag delayed = new TypeTag(Delayed.class);
             DelayQueue red = new DelayQueue<>();
@@ -204,8 +209,8 @@ public final class JavaApiPrefabValues {
             redCopy.add(pf.giveRed(delayed));
             return new Tuple<>(red, black, redCopy);
         });
-        addCollectionFactory(LinkedBlockingQueue.class, () -> new LinkedBlockingQueue<>(1));
-        addCollectionFactory(PriorityBlockingQueue.class, () -> new PriorityBlockingQueue<>(1, OBJECT_COMPARATOR));
+        addFactory(LinkedBlockingQueue.class, collection(() -> new LinkedBlockingQueue<>(1)));
+        addFactory(PriorityBlockingQueue.class, collection(() -> new PriorityBlockingQueue<>(1, OBJECT_COMPARATOR)));
         addValues(SynchronousQueue.class, new SynchronousQueue<>(), new SynchronousQueue<>(), new SynchronousQueue<>());
     }
 
@@ -368,11 +373,7 @@ public final class JavaApiPrefabValues {
         prefabValues.addFactory(type, (T)red, (T)black, (T)redCopy);
     }
 
-    private <T extends Collection<?>> void addCollectionFactory(Class<T> type, Supplier<T> createEmpty) {
-        prefabValues.addFactory(type, new CollectionFactory<>(createEmpty));
-    }
-
-    private <T extends Map<?, ?>> void addMapFactory(Class<T> type, Supplier<T> createEmpty) {
+    private <A, B, T extends Map<A, B>> void addMapFactory(Class<T> type, Supplier<T> createEmpty) {
         prefabValues.addFactory(type, new MapFactory<>(createEmpty));
     }
 

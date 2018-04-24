@@ -5,6 +5,7 @@ import nl.jqno.equalsverifier.internal.prefabvalues.Tuple;
 import nl.jqno.equalsverifier.internal.prefabvalues.TypeTag;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -19,6 +20,14 @@ public final class GenericContainerFactory<T> implements AbstractReflectiveGener
     private GenericContainerFactory(Function<List<Object>, T> factory, Supplier<T> empty) {
         this.factory = factory;
         this.empty = empty;
+    }
+
+    public static <A, T extends Collection<A>> GenericContainerFactory<T> collection(Supplier<T> empty) {
+        return GenericContainerFactory.<A, T>one(a -> {
+            T collection = empty.get();
+            collection.add(a);
+            return collection;
+        }, empty);
     }
 
     @SuppressWarnings("unchecked")
