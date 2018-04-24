@@ -183,12 +183,7 @@ public final class JavaApiPrefabValues {
         addFactory(HashSet.class, collection(HashSet::new));
         addFactory(TreeSet.class, collection(() -> new TreeSet<>(OBJECT_COMPARATOR)));
         addFactory(EnumSet.class, new ReflectiveEnumSetFactory());
-
-        BitSet redBitSet = new BitSet();
-        BitSet blackBitSet = new BitSet();
-        blackBitSet.set(0);
-        BitSet redCopyBitSet = new BitSet();
-        addValues(BitSet.class, redBitSet, blackBitSet, redCopyBitSet);
+        addValues(BitSet.class, BitSet.valueOf(new long[]{0}), BitSet.valueOf(new long[]{1}), BitSet.valueOf(new long[]{0}));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -199,16 +194,11 @@ public final class JavaApiPrefabValues {
         addFactory(BlockingDeque.class, collection(() -> new LinkedBlockingDeque<>(1)));
         addFactory(ArrayBlockingQueue.class, collection(() -> new ArrayBlockingQueue<>(1)));
         addFactory(ConcurrentLinkedQueue.class, collection(ConcurrentLinkedQueue::new));
-        addFactory(DelayQueue.class, (tag, pf, typeStack) -> {
-            TypeTag delayed = new TypeTag(Delayed.class);
-            DelayQueue red = new DelayQueue<>();
-            red.add(pf.giveRed(delayed));
-            DelayQueue black = new DelayQueue<>();
-            black.add(pf.giveBlack(delayed));
-            DelayQueue redCopy = new DelayQueue<>();
-            redCopy.add(pf.giveRed(delayed));
-            return new Tuple<>(red, black, redCopy);
-        });
+        addFactory(DelayQueue.class, GenericContainerFactory.<Delayed, DelayQueue>one(a -> {
+            DelayQueue dq = new DelayQueue<>();
+            dq.add(a);
+            return dq;
+        }, DelayQueue::new));
         addFactory(LinkedBlockingQueue.class, collection(() -> new LinkedBlockingQueue<>(1)));
         addFactory(PriorityBlockingQueue.class, collection(() -> new PriorityBlockingQueue<>(1, OBJECT_COMPARATOR)));
         addValues(SynchronousQueue.class, new SynchronousQueue<>(), new SynchronousQueue<>(), new SynchronousQueue<>());
