@@ -24,9 +24,9 @@ public class GenericContainerFactoryTest {
     private static final TypeTag PAIR_TYPETAG = new TypeTag(Pair.class, STRING_TYPETAG, INTEGER_TYPETAG);
 
     private static final GenericContainerFactory<Optional> OPTIONAL_FACTORY =
-        GenericContainerFactory.one(Optional::of);
+        GenericContainerFactory.one(Optional::of, Optional::empty);
     private static final GenericContainerFactory<Pair> PAIR_FACTORY =
-        GenericContainerFactory.two(Pair::of);
+        GenericContainerFactory.two(Pair::of, null);
 
     private final PrefabValues prefabValues = new PrefabValues();
     private final LinkedHashSet<TypeTag> typeStack = new LinkedHashSet<>();
