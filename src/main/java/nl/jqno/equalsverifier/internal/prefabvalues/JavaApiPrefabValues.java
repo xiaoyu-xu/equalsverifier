@@ -385,8 +385,7 @@ public final class JavaApiPrefabValues {
     }
 
     private <A, T extends Collection<A>> void addNewGuavaCollection(String declaredType, String actualType) {
-        @SuppressWarnings("unchecked")
-        Class<T> type = (Class<T>)classForName(GUAVA_PACKAGE + declaredType);
+        Class<T> type = classForName(GUAVA_PACKAGE + declaredType);
         PrefabValueFactory<T> factory =
             reflectiveCollection(GUAVA_PACKAGE + actualType, "create", classes(), objects());
         addFactory(type, factory);
@@ -394,39 +393,34 @@ public final class JavaApiPrefabValues {
 
     private <A, T extends Collection<A>, U> void addNewGuavaCollection(
             String declaredType, String actualType, Class<U> parameterType, U parameterValue) {
-        @SuppressWarnings("unchecked")
-        Class<T> type = (Class<T>)classForName(GUAVA_PACKAGE + declaredType);
+        Class<T> type = classForName(GUAVA_PACKAGE + declaredType);
         PrefabValueFactory<T> factory =
             reflectiveCollection(GUAVA_PACKAGE + actualType, "create", classes(parameterType), objects(parameterValue));
         addFactory(type, factory);
     }
 
     private <T> void addNewGuavaMap(String declaredType, String actualType) {
-        @SuppressWarnings("unchecked")
-        Class<T> type = (Class<T>)classForName(GUAVA_PACKAGE + declaredType);
+        Class<T> type = classForName(GUAVA_PACKAGE + declaredType);
         ReflectiveMapFactory<T> factory = ReflectiveMapFactory.callFactoryMethod(GUAVA_PACKAGE + actualType, "create");
         addFactory(type, factory);
     }
 
     private <T> void addNewGuavaMap(String declaredType, String actualType, Comparator<Object> comparator) {
-        @SuppressWarnings("unchecked")
-        Class<T> type = (Class<T>)classForName(GUAVA_PACKAGE + declaredType);
+        Class<T> type = classForName(GUAVA_PACKAGE + declaredType);
         ReflectiveMapFactory<T> factory =
                 ReflectiveMapFactory.callFactoryMethodWithComparator(GUAVA_PACKAGE + actualType, "create", comparator);
         addFactory(type, factory);
     }
 
     private <T> void addNewGuavaTable(String declaredType, String actualType, Comparator<Object> comparator) {
-        @SuppressWarnings("unchecked")
-        Class<T> type = (Class<T>)classForName(GUAVA_PACKAGE + declaredType);
+        Class<T> type = classForName(GUAVA_PACKAGE + declaredType);
         ReflectiveGuavaTableFactory<T> factory =
                 ReflectiveGuavaTableFactory.callFactoryMethodWithComparator(GUAVA_PACKAGE + actualType, "create", comparator);
         addFactory(type, factory);
     }
 
     private <T> void addNewGuavaTable(String declaredType, String actualType) {
-        @SuppressWarnings("unchecked")
-        Class<T> type = (Class<T>)classForName(GUAVA_PACKAGE + declaredType);
+        Class<T> type = classForName(GUAVA_PACKAGE + declaredType);
         ReflectiveGuavaTableFactory<T> factory =
                 ReflectiveGuavaTableFactory.callFactoryMethod(GUAVA_PACKAGE + actualType, "create");
         addFactory(type, factory);
