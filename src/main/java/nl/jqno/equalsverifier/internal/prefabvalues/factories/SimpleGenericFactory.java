@@ -3,51 +3,21 @@ package nl.jqno.equalsverifier.internal.prefabvalues.factories;
 import nl.jqno.equalsverifier.internal.prefabvalues.PrefabValues;
 import nl.jqno.equalsverifier.internal.prefabvalues.Tuple;
 import nl.jqno.equalsverifier.internal.prefabvalues.TypeTag;
-import nl.jqno.equalsverifier.internal.reflection.ConditionalInstantiator;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public final class GenericContainerFactory<T> implements AbstractReflectiveGenericFactory<T> {
+public class SimpleGenericFactory<T> implements AbstractReflectiveGenericFactory<T> {
 
     private final Function<List<Object>, T> factory;
     private final Supplier<T> empty;
 
-    private GenericContainerFactory(Function<List<Object>, T> factory, Supplier<T> empty) {
+    SimpleGenericFactory(Function<List<Object>, T> factory, Supplier<T> empty) {
         this.factory = factory;
         this.empty = empty;
-    }
-
-    public static <A, T extends Collection<A>> GenericContainerFactory<T> collection(Supplier<T> empty) {
-        return GenericContainerFactory.<A, T>one(a -> {
-            T collection = empty.get();
-            collection.add(a);
-            return collection;
-        }, empty);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <A, T extends Collection<A>> GenericContainerFactory<T> reflectiveCollection(
-            String fullyQualifiedClassName, String factoryMethod, Class<?>[] paramTypes, Object[] paramValues) {
-        return GenericContainerFactory.collection(() -> {
-            ConditionalInstantiator ci = new ConditionalInstantiator(fullyQualifiedClassName);
-            return (T)ci.callFactory(factoryMethod, paramTypes, paramValues);
-        });
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <A, T> GenericContainerFactory<T> one(Function<A, T> f, Supplier<T> empty) {
-        return new GenericContainerFactory<>(list -> f.apply((A)list.get(0)), empty);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <A, B, T> GenericContainerFactory<T> two(BiFunction<A, B, T> f, Supplier<T> empty) {
-        return new GenericContainerFactory<>(list -> f.apply((A)list.get(0), (B)list.get(1)), empty);
     }
 
     @Override

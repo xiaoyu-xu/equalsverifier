@@ -14,7 +14,7 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 
 @SuppressWarnings("rawtypes")
-public class GenericContainerFactoryTest {
+public class SimpleGenericFactoryTest {
     private static final TypeTag STRING_TYPETAG = new TypeTag(String.class);
     private static final TypeTag INTEGER_TYPETAG = new TypeTag(Integer.class);
     private static final TypeTag OBJECT_TYPETAG = new TypeTag(Object.class);
@@ -23,10 +23,10 @@ public class GenericContainerFactoryTest {
     private static final TypeTag RAWOPTIONAL_TYPETAG = new TypeTag(Optional.class);
     private static final TypeTag PAIR_TYPETAG = new TypeTag(Pair.class, STRING_TYPETAG, INTEGER_TYPETAG);
 
-    private static final GenericContainerFactory<Optional> OPTIONAL_FACTORY =
-        GenericContainerFactory.one(Optional::of, Optional::empty);
-    private static final GenericContainerFactory<Pair> PAIR_FACTORY =
-        GenericContainerFactory.two(Pair::of, null);
+    private static final SimpleGenericFactory<Optional> OPTIONAL_FACTORY =
+        Factories.arity1(Optional::of, Optional::empty);
+    private static final SimpleGenericFactory<Pair> PAIR_FACTORY =
+        Factories.arity2(Pair::of, null);
 
     private final PrefabValues prefabValues = new PrefabValues();
     private final LinkedHashSet<TypeTag> typeStack = new LinkedHashSet<>();

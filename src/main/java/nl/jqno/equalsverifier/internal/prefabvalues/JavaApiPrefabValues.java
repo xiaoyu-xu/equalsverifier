@@ -19,8 +19,7 @@ import java.util.concurrent.locks.StampedLock;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
-import static nl.jqno.equalsverifier.internal.prefabvalues.factories.GenericContainerFactory.collection;
-import static nl.jqno.equalsverifier.internal.prefabvalues.factories.GenericContainerFactory.reflectiveCollection;
+import static nl.jqno.equalsverifier.internal.prefabvalues.factories.Factories.*;
 import static nl.jqno.equalsverifier.internal.reflection.Util.*;
 
 /**
@@ -129,7 +128,7 @@ public final class JavaApiPrefabValues {
         addValues(Throwable.class, new Throwable(), new Throwable(), new Throwable());
         addValues(UUID.class, new UUID(0, -1), new UUID(1, 0), new UUID(0, -1));
 
-        addFactory(ThreadLocal.class, GenericContainerFactory.one(a -> ThreadLocal.withInitial(() -> a), null));
+        addFactory(ThreadLocal.class, arity1(a -> ThreadLocal.withInitial(() -> a), null));
 
         // Constructing InetAddress reflectively, because it might throw an awkward exception otherwise.
         ConditionalInstantiator inetAddress = new ConditionalInstantiator("java.net.InetAddress");
@@ -141,7 +140,7 @@ public final class JavaApiPrefabValues {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void addCollection() {
-        addFactory(Iterable.class, GenericContainerFactory.one(a -> {
+        addFactory(Iterable.class, arity1(a -> {
             Collection coll = new ArrayList<>();
             coll.add(a);
             return coll;
@@ -195,7 +194,7 @@ public final class JavaApiPrefabValues {
         addFactory(BlockingDeque.class, collection(() -> new LinkedBlockingDeque<>(1)));
         addFactory(ArrayBlockingQueue.class, collection(() -> new ArrayBlockingQueue<>(1)));
         addFactory(ConcurrentLinkedQueue.class, collection(ConcurrentLinkedQueue::new));
-        addFactory(DelayQueue.class, GenericContainerFactory.<Delayed, DelayQueue>one(a -> {
+        addFactory(DelayQueue.class, Factories.<Delayed, DelayQueue>arity1(a -> {
             DelayQueue dq = new DelayQueue<>();
             dq.add(a);
             return dq;
@@ -214,8 +213,8 @@ public final class JavaApiPrefabValues {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void addJava8ApiClasses() {
-        addFactory(Optional.class, GenericContainerFactory.one(Optional::of, Optional::empty));
-        addFactory(CompletableFuture.class, GenericContainerFactory.one(ignored -> new CompletableFuture<>(), null));
+        addFactory(Optional.class, arity1(Optional::of, Optional::empty));
+        addFactory(CompletableFuture.class, arity1(ignored -> new CompletableFuture<>(), null));
 
         addValues(LocalDateTime.class, LocalDateTime.MIN, LocalDateTime.MAX, LocalDateTime.MIN);
         addValues(LocalDate.class, LocalDate.MIN, LocalDate.MAX, LocalDate.MIN);
