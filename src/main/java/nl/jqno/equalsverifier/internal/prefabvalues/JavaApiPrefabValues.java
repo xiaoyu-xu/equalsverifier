@@ -20,6 +20,7 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import static nl.jqno.equalsverifier.internal.prefabvalues.factories.GenericContainerFactory.collection;
+import static nl.jqno.equalsverifier.internal.prefabvalues.factories.GenericContainerFactory.reflectiveCollection;
 import static nl.jqno.equalsverifier.internal.reflection.Util.*;
 
 /**
@@ -384,19 +385,20 @@ public final class JavaApiPrefabValues {
                 new ReflectiveJavaFxPropertyFactory(JAVAFX_PROPERTY_PACKAGE + actualType, propertyType));
     }
 
-    private <T> void addNewGuavaCollection(String declaredType, String actualType) {
+    private <A, T extends Collection<A>> void addNewGuavaCollection(String declaredType, String actualType) {
         @SuppressWarnings("unchecked")
         Class<T> type = (Class<T>)classForName(GUAVA_PACKAGE + declaredType);
-        ReflectiveCollectionFactory<T> factory =
-                ReflectiveCollectionFactory.callFactoryMethod(GUAVA_PACKAGE + actualType, "create");
+        PrefabValueFactory<T> factory =
+            reflectiveCollection(GUAVA_PACKAGE + actualType, "create", classes(), objects());
         addFactory(type, factory);
     }
 
-    private <T, U> void addNewGuavaCollection(String declaredType, String actualType, Class<U> parameterType, U parameterValue) {
+    private <A, T extends Collection<A>, U> void addNewGuavaCollection(
+            String declaredType, String actualType, Class<U> parameterType, U parameterValue) {
         @SuppressWarnings("unchecked")
         Class<T> type = (Class<T>)classForName(GUAVA_PACKAGE + declaredType);
-        ReflectiveCollectionFactory<T> factory =
-                ReflectiveCollectionFactory.callFactoryMethodWithParameter(GUAVA_PACKAGE + actualType, "create", parameterType, parameterValue);
+        PrefabValueFactory<T> factory =
+            reflectiveCollection(GUAVA_PACKAGE + actualType, "create", classes(parameterType), objects(parameterValue));
         addFactory(type, factory);
     }
 

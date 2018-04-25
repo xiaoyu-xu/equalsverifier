@@ -3,6 +3,7 @@ package nl.jqno.equalsverifier.internal.prefabvalues.factories;
 import nl.jqno.equalsverifier.internal.prefabvalues.PrefabValues;
 import nl.jqno.equalsverifier.internal.prefabvalues.Tuple;
 import nl.jqno.equalsverifier.internal.prefabvalues.TypeTag;
+import nl.jqno.equalsverifier.internal.reflection.ConditionalInstantiator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,6 +29,15 @@ public final class GenericContainerFactory<T> implements AbstractReflectiveGener
             collection.add(a);
             return collection;
         }, empty);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <A, T extends Collection<A>> GenericContainerFactory<T> reflectiveCollection(
+            String fullyQualifiedClassName, String factoryMethod, Class<?>[] paramTypes, Object[] paramValues) {
+        return GenericContainerFactory.collection(() -> {
+            ConditionalInstantiator ci = new ConditionalInstantiator(fullyQualifiedClassName);
+            return (T)ci.callFactory(factoryMethod, paramTypes, paramValues);
+        });
     }
 
     @SuppressWarnings("unchecked")
