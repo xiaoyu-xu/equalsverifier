@@ -10,7 +10,7 @@ import java.util.LinkedHashSet;
 import static nl.jqno.equalsverifier.internal.reflection.Util.classes;
 import static nl.jqno.equalsverifier.internal.reflection.Util.objects;
 
-public class ReflectiveLazyAwtFactory<T> extends AbstractReflectiveGenericFactory<T> {
+public class ReflectiveLazyAwtFactory<T> implements AbstractReflectiveGenericFactory<T> {
     private final String typeName;
 
     public ReflectiveLazyAwtFactory(String typeName) {

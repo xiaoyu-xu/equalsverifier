@@ -7,7 +7,7 @@ import nl.jqno.equalsverifier.internal.reflection.ConditionalInstantiator;
 
 import java.util.LinkedHashSet;
 
-public class ReflectiveLazyConstantFactory<T> extends AbstractReflectiveGenericFactory<T> {
+public class ReflectiveLazyConstantFactory<T> implements AbstractReflectiveGenericFactory<T> {
     private final String typeName;
     private final String redConstant;
     private final String blackConstant;
