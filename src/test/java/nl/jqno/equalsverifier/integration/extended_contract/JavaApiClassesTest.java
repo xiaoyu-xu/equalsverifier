@@ -51,14 +51,20 @@ public class JavaApiClassesTest extends IntegrationTestBase {
     }
 
     @Test
-    public void succeed_whenClassContainsACommonJavaApiType() {
+    public void succeed_whenClassContainsACommonJavaApiClasses() {
         EqualsVerifier.forClass(CommonClassesContainer.class)
                 .verify();
     }
 
     @Test
-    public void succeed_whenClassContainsACommonJava8ApiType() {
+    public void succeed_whenClassContainsACommonJava8ApiClasses() {
         EqualsVerifier.forClass(Java8ApiClassesContainer.class)
+                .verify();
+    }
+
+    @Test
+    public void succeed_whenClassContainsAwtClasses() {
+        EqualsVerifier.forClass(AwtClassesContainer.class)
                 .verify();
     }
 
@@ -257,19 +263,14 @@ public class JavaApiClassesTest extends IntegrationTestBase {
         private final UUID uuid;
         private final InetAddress inetAddress;
         private final Thread thread;
-        private final java.awt.color.ColorSpace awtColorSpace;
-        private final java.awt.color.ICC_ColorSpace iccColorSpace;
-        private final java.awt.color.ICC_Profile iccProfile;
 
         // CHECKSTYLE: ignore ParameterNumber for 1 line.
         public CommonClassesContainer(String string, Integer integer, Class<?> type, BitSet bitset,
                 Calendar calendar, Date date, File file, GregorianCalendar gregorianCalendar, Pattern pattern,
-                SimpleDateFormat simpleDateFormat, UUID uuid, InetAddress inetAddress, Thread thread,
-                java.awt.color.ColorSpace awtColorSpace, java.awt.color.ICC_ColorSpace iccColorSpace, java.awt.color.ICC_Profile iccProfile) {
+                SimpleDateFormat simpleDateFormat, UUID uuid, InetAddress inetAddress, Thread thread) {
             this.string = string; this.integer = integer; this.type = type; this.bitset = bitset;
             this.calendar = calendar; this.date = date; this.file = file; this.gregorianCalendar = gregorianCalendar; this.pattern = pattern;
             this.simpleDateFormat = simpleDateFormat; this.uuid = uuid; this.inetAddress = inetAddress; this.thread = thread;
-            this.awtColorSpace = awtColorSpace; this.iccColorSpace = iccColorSpace; this.iccProfile = iccProfile;
         }
 
         @Override public boolean equals(Object obj) { return defaultEquals(this, obj); }
@@ -290,6 +291,21 @@ public class JavaApiClassesTest extends IntegrationTestBase {
             this.optional = optional; this.zonedDateTime = zonedDateTime; this.zoneId = zoneId;
             this.dateTimeFormatter = dateTimeFormatter; this.completableFuture = completableFuture;
             this.stampedLock = stampedLock;
+        }
+
+        @Override public boolean equals(Object obj) { return defaultEquals(this, obj); }
+        @Override public int hashCode() { return defaultHashCode(this); }
+    }
+
+    @SuppressWarnings("unused") // because of the use of defaultEquals and defaultHashCode
+    static final class AwtClassesContainer {
+        private final java.awt.color.ColorSpace awtColorSpace;
+        private final java.awt.color.ICC_ColorSpace iccColorSpace;
+        private final java.awt.color.ICC_Profile iccProfile;
+
+        public AwtClassesContainer(java.awt.color.ColorSpace awtColorSpace, java.awt.color.ICC_ColorSpace iccColorSpace,
+                java.awt.color.ICC_Profile iccProfile) {
+            this.awtColorSpace = awtColorSpace; this.iccColorSpace = iccColorSpace; this.iccProfile = iccProfile;
         }
 
         @Override public boolean equals(Object obj) { return defaultEquals(this, obj); }
