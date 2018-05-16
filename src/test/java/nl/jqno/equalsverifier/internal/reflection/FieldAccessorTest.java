@@ -173,7 +173,7 @@ public class FieldAccessorTest {
     }
 
     @Test
-    public void defaultFieldOnObjectSetsNull() throws NoSuchFieldException {
+    public void defaultFieldOnObjectSetsNull() {
         ObjectContainer foo = new ObjectContainer();
         foo.field = new Object();
         doNullField(foo, FIELD_NAME);
@@ -181,7 +181,7 @@ public class FieldAccessorTest {
     }
 
     @Test
-    public void defaultFieldOnArraySetsNull() throws NoSuchFieldException {
+    public void defaultFieldOnArraySetsNull() {
         AllTypesContainer foo = new AllTypesContainer();
         foo._array = new int[] { 1, 2, 3 };
         doNullField(foo, "_array");
@@ -189,7 +189,7 @@ public class FieldAccessorTest {
     }
 
     @Test
-    public void defaultFieldOnBooleanSetsFalse() throws NoSuchFieldException {
+    public void defaultFieldOnBooleanSetsFalse() {
         AllTypesContainer foo = new AllTypesContainer();
         foo._boolean = true;
         doNullField(foo, "_boolean");
@@ -197,7 +197,7 @@ public class FieldAccessorTest {
     }
 
     @Test
-    public void defaultFieldOnByteSetsZero() throws NoSuchFieldException {
+    public void defaultFieldOnByteSetsZero() {
         AllTypesContainer foo = new AllTypesContainer();
         foo._byte = 10;
         doNullField(foo, "_byte");
@@ -205,7 +205,7 @@ public class FieldAccessorTest {
     }
 
     @Test
-    public void defaultFieldOnCharSetsZero() throws NoSuchFieldException {
+    public void defaultFieldOnCharSetsZero() {
         AllTypesContainer foo = new AllTypesContainer();
         foo._char = 'a';
         doNullField(foo, "_char");
@@ -213,7 +213,7 @@ public class FieldAccessorTest {
     }
 
     @Test
-    public void defaultFieldOnDoubleSetsZero() throws NoSuchFieldException {
+    public void defaultFieldOnDoubleSetsZero() {
         AllTypesContainer foo = new AllTypesContainer();
         foo._double = 1.1;
         doNullField(foo, "_double");
@@ -221,7 +221,7 @@ public class FieldAccessorTest {
     }
 
     @Test
-    public void defaultFieldOnFloatSetsZero() throws NoSuchFieldException {
+    public void defaultFieldOnFloatSetsZero() {
         AllTypesContainer foo = new AllTypesContainer();
         foo._float = 1.1f;
         doNullField(foo, "_float");
@@ -229,7 +229,7 @@ public class FieldAccessorTest {
     }
 
     @Test
-    public void defaultFieldOnIntSetsZero() throws NoSuchFieldException {
+    public void defaultFieldOnIntSetsZero() {
         AllTypesContainer foo = new AllTypesContainer();
         foo._int = 10;
         doNullField(foo, "_int");
@@ -237,7 +237,7 @@ public class FieldAccessorTest {
     }
 
     @Test
-    public void defaultFieldOnLongSetsZero() throws NoSuchFieldException {
+    public void defaultFieldOnLongSetsZero() {
         AllTypesContainer foo = new AllTypesContainer();
         foo._long = 10;
         doNullField(foo, "_long");
@@ -245,7 +245,7 @@ public class FieldAccessorTest {
     }
 
     @Test
-    public void defaultFieldOnShortSetsZero() throws NoSuchFieldException {
+    public void defaultFieldOnShortSetsZero() {
         AllTypesContainer foo = new AllTypesContainer();
         foo._short = 10;
         doNullField(foo, "_short");
@@ -254,7 +254,7 @@ public class FieldAccessorTest {
 
     @SuppressWarnings("static-access")
     @Test
-    public void defaultFieldOnPrimitiveStaticFinalIsNoOp() throws NoSuchFieldException {
+    public void defaultFieldOnPrimitiveStaticFinalIsNoOp() {
         StaticFinalContainer foo = new StaticFinalContainer();
         doNullField(foo, "CONST");
         assertEquals(42, foo.CONST);
@@ -262,7 +262,7 @@ public class FieldAccessorTest {
 
     @SuppressWarnings("static-access")
     @Test
-    public void defaultFieldOnObjectStaticFinalIsNoOp() throws NoSuchFieldException {
+    public void defaultFieldOnObjectStaticFinalIsNoOp() {
         StaticFinalContainer foo = new StaticFinalContainer();
         Object original = foo.OBJECT;
         doNullField(foo, "OBJECT");
@@ -270,7 +270,7 @@ public class FieldAccessorTest {
     }
 
     @Test
-    public void defaultFieldOnSyntheticIsNoOp() throws NoSuchFieldException {
+    public void defaultFieldOnSyntheticIsNoOp() {
         Outer outer = new Outer();
         Inner inner = outer.new Inner();
         String fieldName = getSyntheticFieldName(inner, "this$");
@@ -279,14 +279,14 @@ public class FieldAccessorTest {
     }
 
     @Test
-    public void defaultPrivateField() throws NoSuchFieldException {
+    public void defaultPrivateField() {
         PrivateObjectContainer foo = new PrivateObjectContainer();
         doNullField(foo, FIELD_NAME);
         assertNull(foo.get());
     }
 
     @Test
-    public void defaultStaticField() throws NoSuchFieldException {
+    public void defaultStaticField() {
         StaticContainer foo = new StaticContainer();
         getAccessorFor(foo, "field").defaultStaticField();
         assertNull(StaticContainer.field);
@@ -334,7 +334,7 @@ public class FieldAccessorTest {
 
     @SuppressWarnings("static-access")
     @Test
-    public void changeFieldOnPrimitiveStaticFinalIsNoOp() throws NoSuchFieldException {
+    public void changeFieldOnPrimitiveStaticFinalIsNoOp() {
         StaticFinalContainer foo = new StaticFinalContainer();
         doChangeField(foo, "CONST");
         assertEquals(42, foo.CONST);
@@ -342,7 +342,7 @@ public class FieldAccessorTest {
 
     @SuppressWarnings("static-access")
     @Test
-    public void changeFieldStaticFinal() throws SecurityException, NoSuchFieldException {
+    public void changeFieldStaticFinal() throws SecurityException {
         StaticFinalContainer foo = new StaticFinalContainer();
         Object original = foo.OBJECT;
         doChangeField(foo, "OBJECT");
