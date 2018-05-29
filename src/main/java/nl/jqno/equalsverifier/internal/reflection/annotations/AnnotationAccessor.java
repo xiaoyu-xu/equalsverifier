@@ -17,8 +17,7 @@ public class AnnotationAccessor {
     private final Class<?> type;
     private final Set<String> ignoredAnnotations;
     private final boolean ignoreFailure;
-    private final Set<Annotation> classAnnotations = new HashSet<>();
-    private final Map<String, Set<Annotation>> fieldAnnotations = new HashMap<>();
+    private final AnnotationCache cache = new AnnotationCache();
 
     private boolean processed = false;
     private boolean shortCircuit = false;
@@ -51,7 +50,7 @@ public class AnnotationAccessor {
             return false;
         }
         process();
-        return classAnnotations.contains(annotation);
+        return cache.hasClassAnnotation(type, annotation);
     }
 
     /**
@@ -71,14 +70,10 @@ public class AnnotationAccessor {
             return false;
         }
         process();
-        Set<Annotation> annotations = fieldAnnotations.get(fieldName);
-        if (annotations == null) {
-            if (ignoreFailure) {
-                return false;
-            }
+        if (!cache.hasField(type, fieldName) && !ignoreFailure) {
             throw new ReflectionException("Class " + type.getName() + " does not have field " + fieldName);
         }
-        return annotations.contains(annotation);
+        return cache.hasFieldAnnotation(type, fieldName, annotation);
     }
 
     private void process() {
@@ -136,49 +131,52 @@ public class AnnotationAccessor {
 
         @Override
         public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
-            return new MyAnnotationVisitor(descriptor, classAnnotations, inheriting);
+            return new MyAnnotationVisitor(descriptor, cache, Optional.empty(), inheriting);
         }
 
         @Override
         public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
-            HashSet<Annotation> annotations = new HashSet<>();
-            fieldAnnotations.put(name, annotations);
-            return new MyFieldVisitor(annotations, inheriting);
+            cache.addField(type, name);
+            return new MyFieldVisitor(cache, name, inheriting);
         }
     }
 
     private class MyFieldVisitor extends FieldVisitor {
-        private final Set<Annotation> fieldAnnotations;
+        private final AnnotationCache cache;
+        private final String fieldName;
         private final boolean inheriting;
 
-        public MyFieldVisitor(Set<Annotation> fieldAnnotations, boolean inheriting) {
+        public MyFieldVisitor(AnnotationCache cache, String fieldName, boolean inheriting) {
             super(Opcodes.ASM6);
-            this.fieldAnnotations = fieldAnnotations;
+            this.cache = cache;
+            this.fieldName = fieldName;
             this.inheriting = inheriting;
         }
 
         @Override
         public AnnotationVisitor visitTypeAnnotation(int typeRef, TypePath typePath, String descriptor, boolean visible) {
-            return new MyAnnotationVisitor(descriptor, fieldAnnotations, inheriting);
+            return new MyAnnotationVisitor(descriptor, cache, Optional.of(fieldName), inheriting);
         }
 
         @Override
         public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
-            return new MyAnnotationVisitor(descriptor, fieldAnnotations, inheriting);
+            return new MyAnnotationVisitor(descriptor, cache, Optional.of(fieldName), inheriting);
         }
     }
 
     private class MyAnnotationVisitor extends AnnotationVisitor {
         private final String annotationDescriptor;
-        private final Set<Annotation> annotations;
+        private final AnnotationCache cache;
+        private final Optional<String> fieldName;
         private final boolean inheriting;
 
         private final AnnotationProperties properties;
 
-        public MyAnnotationVisitor(String annotationDescriptor, Set<Annotation> annotations, boolean inheriting) {
+        public MyAnnotationVisitor(String annotationDescriptor, AnnotationCache cache, Optional<String> fieldName, boolean inheriting) {
             super(Opcodes.ASM6);
             this.annotationDescriptor = annotationDescriptor;
-            this.annotations = annotations;
+            this.cache = cache;
+            this.fieldName = fieldName;
             this.inheriting = inheriting;
             properties = new AnnotationProperties(annotationDescriptor);
         }
@@ -200,7 +198,12 @@ public class AnnotationAccessor {
                     for (String descriptor : annotation.descriptors()) {
                         String asBytecodeIdentifier = descriptor.replaceAll("\\.", "/") + ";";
                         if (annotationDescriptor.endsWith(asBytecodeIdentifier) && annotation.validate(properties, ignoredAnnotations)) {
-                            annotations.add(annotation);
+                            if (fieldName.isPresent()) {
+                                cache.addFieldAnnotation(type, fieldName.get(), annotation);
+                            }
+                            else {
+                                cache.addClassAnnotation(type, annotation);
+                            }
                         }
                     }
                 }
