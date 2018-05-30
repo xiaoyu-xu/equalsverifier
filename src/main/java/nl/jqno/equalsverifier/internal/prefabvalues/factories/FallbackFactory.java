@@ -6,11 +6,11 @@ import nl.jqno.equalsverifier.internal.prefabvalues.Tuple;
 import nl.jqno.equalsverifier.internal.prefabvalues.TypeTag;
 import nl.jqno.equalsverifier.internal.reflection.ClassAccessor;
 import nl.jqno.equalsverifier.internal.reflection.FieldIterable;
+import nl.jqno.equalsverifier.internal.reflection.annotations.AnnotationCache;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 
 /**
@@ -21,6 +21,13 @@ import java.util.LinkedHashSet;
  * Then it uses {@link PrefabValues} to fill up all the fields, recursively.
  */
 public class FallbackFactory<T> implements PrefabValueFactory<T> {
+
+    private final AnnotationCache annotationCache;
+
+    public FallbackFactory(AnnotationCache annotationCache) {
+        this.annotationCache = annotationCache;
+    }
+
     @Override
     public Tuple<T> createValues(TypeTag tag, PrefabValues prefabValues, LinkedHashSet<TypeTag> typeStack) {
         @SuppressWarnings("unchecked")
@@ -82,7 +89,7 @@ public class FallbackFactory<T> implements PrefabValueFactory<T> {
     }
 
     private Tuple<T> giveInstances(TypeTag tag, PrefabValues prefabValues) {
-        ClassAccessor<T> accessor = ClassAccessor.of(tag.getType(), prefabValues, new HashSet<>(), false);
+        ClassAccessor<T> accessor = ClassAccessor.of(tag.getType(), prefabValues, annotationCache);
         T red = accessor.getRedObject(tag);
         T black = accessor.getBlackObject(tag);
         T redCopy = accessor.getRedObject(tag);

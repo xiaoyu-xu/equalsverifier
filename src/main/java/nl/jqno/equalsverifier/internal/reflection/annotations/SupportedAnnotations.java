@@ -55,7 +55,7 @@ public enum SupportedAnnotations implements Annotation {
     FINDBUGS1X_DEFAULT_ANNOTATION_NONNULL(false,
             "edu.umd.cs.findbugs.annotations.DefaultAnnotation", "edu.umd.cs.findbugs.annotations.DefaultAnnotationForFields") {
         @Override
-        public boolean validate(AnnotationProperties properties, Set<String> ignoredAnnotations) {
+        public boolean validate(AnnotationCache annotationCache, AnnotationProperties properties, Set<String> ignoredAnnotations) {
             Set<Object> values = properties.getArrayValues("value");
             for (Object value : values) {
                 for (String descriptor : NONNULL.descriptors()) {
@@ -72,17 +72,16 @@ public enum SupportedAnnotations implements Annotation {
 
     JSR305_DEFAULT_ANNOTATION_NONNULL(false, "") {
         @Override
-        public boolean validate(AnnotationProperties properties, Set<String> ignoredAnnotations) {
+        public boolean validate(AnnotationCache annotationCache, AnnotationProperties properties, Set<String> ignoredAnnotations) {
             try {
                 Type t = Type.getType(properties.getDescriptor());
                 Class<?> type = classForName(t.getClassName());
                 if (type == null) {
                     return false;
                 }
-                AnnotationAccessor accessor =
-                        new AnnotationAccessor(new Annotation[] { NONNULL, JSR305_TYPE_QUALIFIER_DEFAULT }, type, ignoredAnnotations, false);
-                boolean hasNonnullAnnotation = accessor.typeHas(NONNULL);
-                boolean hasValidTypeQualifierDefault = accessor.typeHas(JSR305_TYPE_QUALIFIER_DEFAULT);
+                boolean hasNonnullAnnotation = annotationCache.hasClassAnnotation(type, NONNULL) ||
+                        annotationCache.hasClassAnnotation(type, JSR305_TYPE_QUALIFIER_DEFAULT);
+                boolean hasValidTypeQualifierDefault = annotationCache.hasClassAnnotation(type, JSR305_TYPE_QUALIFIER_DEFAULT);
                 return hasNonnullAnnotation && hasValidTypeQualifierDefault;
             }
             catch (UnsupportedClassVersionError ignored) {
@@ -93,14 +92,14 @@ public enum SupportedAnnotations implements Annotation {
 
     JSR305_TYPE_QUALIFIER_DEFAULT(false, "javax.annotation.meta.TypeQualifierDefault") {
         @Override
-        public boolean validate(AnnotationProperties properties, Set<String> ignoredAnnotations) {
+        public boolean validate(AnnotationCache annotationCache, AnnotationProperties properties, Set<String> ignoredAnnotations) {
             return properties.getArrayValues("value").contains("FIELD");
         }
     },
 
     ECLIPSE_DEFAULT_ANNOTATION_NONNULL(false, "org.eclipse.jdt.annotation.NonNullByDefault") {
         @Override
-        public boolean validate(AnnotationProperties properties, Set<String> ignoredAnnotations) {
+        public boolean validate(AnnotationCache annotationCache, AnnotationProperties properties, Set<String> ignoredAnnotations) {
             Set<Object> values = properties.getArrayValues("value");
             if (values == null) {
                 return true;
@@ -135,7 +134,7 @@ public enum SupportedAnnotations implements Annotation {
     }
 
     @Override
-    public boolean validate(AnnotationProperties properties, Set<String> ignoredAnnotations) {
+    public boolean validate(AnnotationCache annotationCache, AnnotationProperties properties, Set<String> ignoredAnnotations) {
         return true;
     }
 }

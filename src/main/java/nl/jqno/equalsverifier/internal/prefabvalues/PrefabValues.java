@@ -5,6 +5,7 @@ import nl.jqno.equalsverifier.internal.exceptions.ReflectionException;
 import nl.jqno.equalsverifier.internal.prefabvalues.factories.FallbackFactory;
 import nl.jqno.equalsverifier.internal.prefabvalues.factories.PrefabValueFactory;
 import nl.jqno.equalsverifier.internal.prefabvalues.factories.SimpleFactory;
+import nl.jqno.equalsverifier.internal.reflection.annotations.AnnotationCache;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,7 +24,11 @@ public class PrefabValues {
 
     private final Cache cache = new Cache();
     private final FactoryCache factoryCache = new FactoryCache();
-    private final PrefabValueFactory<?> fallbackFactory = new FallbackFactory<>();
+    private final PrefabValueFactory<?> fallbackFactory;
+
+    public PrefabValues(AnnotationCache annotationCache) {
+        this.fallbackFactory = new FallbackFactory<>(annotationCache);
+    }
 
     /**
      * Associates the factory that can create instances of the given type,

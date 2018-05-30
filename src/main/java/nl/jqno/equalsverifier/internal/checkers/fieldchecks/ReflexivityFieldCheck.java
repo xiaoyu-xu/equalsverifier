@@ -5,6 +5,7 @@ import nl.jqno.equalsverifier.internal.prefabvalues.PrefabValues;
 import nl.jqno.equalsverifier.internal.prefabvalues.TypeTag;
 import nl.jqno.equalsverifier.internal.reflection.ClassAccessor;
 import nl.jqno.equalsverifier.internal.reflection.FieldAccessor;
+import nl.jqno.equalsverifier.internal.reflection.annotations.AnnotationCache;
 import nl.jqno.equalsverifier.internal.reflection.annotations.NonnullAnnotationVerifier;
 import nl.jqno.equalsverifier.internal.util.Configuration;
 import nl.jqno.equalsverifier.internal.util.Formatter;
@@ -23,6 +24,7 @@ public class ReflexivityFieldCheck<T> implements FieldCheck {
     private final ClassAccessor<?> classAccessor;
     private final EnumSet<Warning> warningsToSuppress;
     private final Set<String> nonnullFields;
+    private final AnnotationCache annotationCache;
 
     public ReflexivityFieldCheck(Configuration<T> config) {
         this.typeTag = config.getTypeTag();
@@ -30,6 +32,7 @@ public class ReflexivityFieldCheck<T> implements FieldCheck {
         this.classAccessor = config.createClassAccessor();
         this.warningsToSuppress = config.getWarningsToSuppress();
         this.nonnullFields = config.getNonnullFields();
+        this.annotationCache = config.getAnnotationCache();
     }
 
     @Override
@@ -58,7 +61,7 @@ public class ReflexivityFieldCheck<T> implements FieldCheck {
         if (changedAccessor.fieldIsStatic()) {
             return;
         }
-        ClassAccessor<?> fieldTypeAccessor = ClassAccessor.of(fieldType, prefabValues, new HashSet<>(), true);
+        ClassAccessor<?> fieldTypeAccessor = ClassAccessor.of(fieldType, prefabValues, annotationCache);
         if (!fieldTypeAccessor.declaresEquals()) {
             return;
         }
