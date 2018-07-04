@@ -13,7 +13,8 @@ import java.util.*;
  * and its fields.
  */
 public class AnnotationAccessor {
-    private static final int OPCODES = Opcodes.ASM6;
+    @SuppressWarnings("deprecation")
+    private static final int OPCODES = Opcodes.ASM7_EXPERIMENTAL;
 
     private final Annotation[] supportedAnnotations;
     private final Class<?> type;
