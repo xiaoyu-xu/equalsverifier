@@ -6,6 +6,8 @@ import nl.jqno.equalsverifier.testhelpers.IntegrationTestBase;
 import nl.jqno.equalsverifier.testhelpers.types.Color;
 import org.junit.Test;
 
+import java.util.function.Supplier;
+
 import static nl.jqno.equalsverifier.testhelpers.Util.defaultHashCode;
 
 public class AbstractHierarchyTest extends IntegrationTestBase {
@@ -129,10 +131,6 @@ public class AbstractHierarchyTest extends IntegrationTestBase {
         }
 
         @Override public final int hashCode() { return defaultHashCode(this); }
-    }
-
-    interface Supplier<T> {
-        T get();
     }
 
     abstract static class AbstractLazyObjectContainer {
